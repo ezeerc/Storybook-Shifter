@@ -20,10 +20,13 @@ public class cameraController : MonoBehaviour
             if (vcam.Priority == 1)
             {
                 vcam.Priority = 10;
+                PlayerController.threeDimensions = true;
+
             }
             else
             {
                 vcam.Priority = 1;
+                PlayerController.threeDimensions = false;
             }
         }
 
