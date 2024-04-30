@@ -1,34 +1,9 @@
 fileFormatVersion: 2
-guid: 338313889931b5547a0ecd433ddfa934
+guid: 97df0bd1181de2042bed10ec65418c42
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Ch09_body
-    second: {fileID: 2100000, guid: 2c3670acea3c3484c8f2eaaebbbc2d60, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch09_1001_Diffuse
-    second: {fileID: 2800000, guid: 118110f186159e44e91297ecd7cc57ff, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch09_1001_Glossiness
-    second: {fileID: 2800000, guid: 4ec2bab6f48037d439484c55e37bd19a, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch09_1001_Normal
-    second: {fileID: 2800000, guid: 8643488958d742945aaa6c5bf8ff5ae1, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch09_1001_Specular
-    second: {fileID: 2800000, guid: 151ddfc352113a245bd8bb10cbcf1a90, type: 3}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -58,11 +33,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: mixamo.com
+      name: Jumping
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 1
+      lastFrame: 57
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -131,21 +106,7 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
-  referencedClips:
-  - 4a19d9d849ef55e4fbf4c84c84b22e2d
-  - 52992d5ec1812954fbcd618ed3242910
-  - 97df0bd1181de2042bed10ec65418c42
-  - 99cdd597c23e3a34fa85461df46b4bce
-  - 524876970ed1aad4fa0a6886f19d76b6
-  - b8766dbf6b3b61743ae77b060ef96435
-  - 45ddc90990a47df4facadf186b34834f
-  - 58d5f2d2f6c6e134c9467d7da8135882
-  - bb5c0dd9016110d4cab8b1ddebd4da49
-  - 7a34b08f043f00548a0af9ede5a46bec
-  - 2e4261f2589c2ca499a04b271656c24f
-  - d7a123ed63cd4914caf62ad0d3e54343
-  - 8082a072adf3bf5448a82a5444e63394
-  - f06e387af5cb9944badb1f784fb85827
+  referencedClips: []
   importAnimation: 1
   humanDescription:
     serializedVersion: 3
@@ -914,11 +875,11 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 338313889931b5547a0ecd433ddfa934, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

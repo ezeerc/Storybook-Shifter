@@ -21,12 +21,14 @@ public class cameraController : MonoBehaviour
             {
                 vcam.Priority = 10;
                 PlayerController.threeDimensions = true;
+                Camera.main.orthographic = false;
 
             }
             else
             {
                 vcam.Priority = 1;
                 PlayerController.threeDimensions = false;
+                Camera.main.orthographic = true;
             }
         }
 

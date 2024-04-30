@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -9,15 +10,21 @@ using static UnityEditor.Timeline.TimelinePlaybackControls;
 public class PlayerController : MonoBehaviour
 {
     Vector2 moveDirection;
+    float jumpDirection;
     public float moveSpeed = 2f;
     public float maxForwardSpeed = 8f;
     float desiredSpeed;
     float forwardSpeed;
     float turnSpeed = 100;
+    public float jumpSpeed = 20000f;
+    public float groundRayDist = 1f;
+
     bool oneTime = false;
+    bool readyJump = false;
+    bool onGround = true;
 
     Vector3 position2 = new Vector3(0, 0, 0);
-    Vector3 position = new Vector3(0, 0, 0);
+    Vector3 position1 = new Vector3(0, 0, 0);
 
     const float groundAccel = 5;
     const float groundDecel = 25f;
@@ -25,6 +32,7 @@ public class PlayerController : MonoBehaviour
     public static bool threeDimensions = true;
 
     Animator anim;
+    Rigidbody rb;
 
     private Controls controls;
 
@@ -53,6 +61,11 @@ public class PlayerController : MonoBehaviour
 
     }
     */
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        jumpDirection = context.ReadValue<float>();
+    }
     void Move(Vector2 direction)
     {
         float turnAmount = direction.x;
@@ -71,6 +84,36 @@ public class PlayerController : MonoBehaviour
         //transform.Translate(direction.x * moveSpeed * Time.deltaTime, 0, direction.y * moveSpeed * Time.deltaTime);
     }
 
+    void Jump(float jumpDirection)
+    {
+        if (jumpDirection > 0 && onGround)
+        {
+            anim.SetBool("ReadyJump", true);
+            readyJump = true;
+        }
+        else if (readyJump)
+        {
+            anim.SetBool("Launch", true);
+            readyJump = false;
+            anim.SetBool("ReadyJump", false);
+        }
+    }
+
+    public void Launch()
+    {
+        rb.AddForce(0, jumpSpeed, 0);
+        anim.SetBool("Launch", false);
+        anim.applyRootMotion = false;
+        onGround = false;
+    }
+
+    public void Land()
+    {
+        anim.SetBool("Land", false);
+        anim.applyRootMotion = true;
+        anim.SetBool("Launch", false);
+    }
+
     void Awake()
     {
         controls = new();
@@ -83,6 +126,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         anim = this.GetComponent<Animator>();
+        rb = this.GetComponent<Rigidbody>();
     }
 
     void Tdimesions()
@@ -93,7 +137,7 @@ public class PlayerController : MonoBehaviour
             if (!oneTime)
             {
                 position2 = transform.position;
-                transform.position = new Vector3(position.x, position2.y, position2.z);
+                transform.position = new Vector3(position1.x, position2.y, position2.z);
                 oneTime = true;
             }
         }
@@ -102,8 +146,8 @@ public class PlayerController : MonoBehaviour
             moveDirection = controls.Player.OnMove2d.ReadValue<Vector2>();
             if (oneTime)
             {
-                position = transform.position;
-                transform.position = new Vector3(0, position.y, position.z);
+                position1 = transform.position;
+                transform.position = new Vector3(0, position1.y, position1.z);
                 transform.rotation = Quaternion.Euler(0, 0, 0);
                 oneTime = false;
             }
@@ -118,5 +162,25 @@ public class PlayerController : MonoBehaviour
     {
         Tdimesions();
         Move(moveDirection);
+        Jump(jumpDirection);
+
+        RaycastHit hit;
+        Ray ray = new Ray(this.transform.position + Vector3.up * groundRayDist * 0.5f, -Vector3.up);
+        if (Physics.Raycast(ray, out hit, groundRayDist))
+        {
+            if (!onGround)
+            {
+                onGround = true;
+                anim.SetBool("Land", true);
+                Debug.Log("estoy en tierra");
+            }
+        }
+        else
+        {
+            onGround = false;
+            anim.applyRootMotion = false;
+        }
+
+        Debug.DrawRay(this.transform.position + Vector3.up * groundRayDist * 0.5f, - Vector3.up * groundRayDist, Color.red);
     }
 }
