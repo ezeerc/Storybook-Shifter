@@ -19,13 +19,12 @@ public class PlayerController : MonoBehaviour
     float turnSpeed = 100;
     public float jumpSpeed = 0.1f;
     public float groundRayDist = 1.1f;
-    public float xDirection;
     bool onGround;
 
     bool oneTime = false;
     bool readyJump = false;
 
-
+    Vector3 position3 = new Vector3(0, 0, 0);
     Vector3 position2 = new Vector3(0, 0, 0);
     Vector3 position1 = new Vector3(0, 0, 0);
 
@@ -67,8 +66,8 @@ public class PlayerController : MonoBehaviour
         if (direction.sqrMagnitude > 1f)
             direction.Normalize();
 
-        desiredSpeed = direction.magnitude * maxForwardSpeed * Mathf.Sign(fDirection);
-        float acceleration = IsMoveInput ? groundAccel : groundDecel;
+        desiredSpeed = direction.magnitude * maxForwardSpeed; //* Mathf.Sign(fDirection);
+        float acceleration = 16f;//IsMoveInput ? groundAccel : groundDecel;
 
         forwardSpeed = Mathf.MoveTowards(forwardSpeed, desiredSpeed, acceleration * Time.deltaTime);
         anim.SetFloat("ForwardSpeed", forwardSpeed);
@@ -76,15 +75,6 @@ public class PlayerController : MonoBehaviour
         transform.Rotate(0, turnAmount * turnSpeed * Time.deltaTime, 0);
     }
 
-    void Move2d(Vector2 direction)
-    {
-        float turnAmount = direction.x;
-        float fDirection = direction.y;
-        desiredSpeed = direction.magnitude * maxForwardSpeed * Mathf.Sign(fDirection);
-        float acceleration = IsMoveInput ? groundAccel : groundDecel;
-
-        transform.position += new Vector3(direction.x *  Time.deltaTime, 0, direction.y *Time.deltaTime);
-    }
 
 
     void Jump(float jumpDirection)
@@ -107,10 +97,10 @@ public class PlayerController : MonoBehaviour
 
         //rb.AddForce(new Vector3(0, 6, 0), ForceMode.Impulse);
         anim.applyRootMotion = false;
-        float a = transform.forward.z *2;
+        //float a = transform.forward.z *2;
         rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
         //rb.AddForce(0, jumpSpeed, 0);
-        rb.AddForce(this.transform.forward * jumpForw * 10);
+        rb.AddForce(this.transform.forward * 100 * 10);
         //rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
         anim.SetBool("Launch", false);
         onGround= false;
@@ -151,6 +141,7 @@ public class PlayerController : MonoBehaviour
             {
                 position2 = transform.position;
                 transform.position = new Vector3(position1.x, position2.y, position2.z);
+                position3.x = position1.x;
                 oneTime = true;
             }
         }
@@ -185,7 +176,7 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    bool euler;
+    bool euler = true;
     void Euler()
     {
         if (Input.GetKey(KeyCode.D)){
@@ -201,6 +192,10 @@ public class PlayerController : MonoBehaviour
         if(!threeDimensions && collision.gameObject.tag == "platform")
         {
             position1.x = collision.gameObject.GetComponent<moveThreeD>().position3;
+        }
+        else if(!threeDimensions)
+        {
+            position1.x = position3.x;
         }
     }
 
