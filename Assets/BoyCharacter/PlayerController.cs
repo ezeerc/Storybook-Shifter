@@ -5,6 +5,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class PlayerController : MonoBehaviour
@@ -16,18 +17,21 @@ public class PlayerController : MonoBehaviour
     float desiredSpeed;
     float forwardSpeed;
     float turnSpeed = 100;
-    public float jumpSpeed = 20000f;
-    public float groundRayDist = 1f;
+    public float jumpSpeed = 0.1f;
+    public float groundRayDist = 1.1f;
+    public float xDirection;
+    bool onGround;
 
     bool oneTime = false;
     bool readyJump = false;
-    bool onGround = true;
+
 
     Vector3 position2 = new Vector3(0, 0, 0);
     Vector3 position1 = new Vector3(0, 0, 0);
 
     const float groundAccel = 5;
     const float groundDecel = 25f;
+    public float jumpForw;
 
     public static bool threeDimensions = true;
 
@@ -41,30 +45,20 @@ public class PlayerController : MonoBehaviour
         get { return !Mathf.Approximately(moveDirection.sqrMagnitude, 0f); }
     }
 
-
-    /*public void OnMove3d(InputAction.CallbackContext context)
-    {
-        if (threeDimensions)
-        {
-
-            moveDirection = context.ReadValue<Vector2>();
-        }
-    }
-
-
-    public void OnMove2d(InputAction.CallbackContext context)
-    {
-        if (!threeDimensions)
-        {
-            moveDirection = context.ReadValue<Vector2>();
-        }
-
-    }
-    */
-
     public void OnJump(InputAction.CallbackContext context)
     {
         jumpDirection = context.ReadValue<float>();
+    }
+
+    public bool IsGrounded()
+    {
+        RaycastHit hit;
+        float rayLength = 0.1f;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, rayLength))
+        {
+            return true;
+        }
+        return false;
     }
     void Move(Vector2 direction)
     {
@@ -80,9 +74,18 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("ForwardSpeed", forwardSpeed);
 
         transform.Rotate(0, turnAmount * turnSpeed * Time.deltaTime, 0);
-
-        //transform.Translate(direction.x * moveSpeed * Time.deltaTime, 0, direction.y * moveSpeed * Time.deltaTime);
     }
+
+    void Move2d(Vector2 direction)
+    {
+        float turnAmount = direction.x;
+        float fDirection = direction.y;
+        desiredSpeed = direction.magnitude * maxForwardSpeed * Mathf.Sign(fDirection);
+        float acceleration = IsMoveInput ? groundAccel : groundDecel;
+
+        transform.position += new Vector3(direction.x *  Time.deltaTime, 0, direction.y *Time.deltaTime);
+    }
+
 
     void Jump(float jumpDirection)
     {
@@ -101,10 +104,17 @@ public class PlayerController : MonoBehaviour
 
     public void Launch()
     {
-        rb.AddForce(0, jumpSpeed, 0);
-        anim.SetBool("Launch", false);
+
+        //rb.AddForce(new Vector3(0, 6, 0), ForceMode.Impulse);
         anim.applyRootMotion = false;
-        onGround = false;
+        float a = transform.forward.z *2;
+        rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
+        //rb.AddForce(0, jumpSpeed, 0);
+        rb.AddForce(this.transform.forward * jumpForw * 10);
+        //rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+        anim.SetBool("Launch", false);
+        onGround= false;
+
     }
 
     public void Land()
@@ -117,7 +127,9 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         controls = new();
+
     }
+
 
     private void OnEnable()
     {
@@ -128,6 +140,7 @@ public class PlayerController : MonoBehaviour
         anim = this.GetComponent<Animator>();
         rb = this.GetComponent<Rigidbody>();
     }
+
 
     void Tdimesions()
     {
@@ -143,44 +156,73 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            moveDirection = controls.Player.OnMove2d.ReadValue<Vector2>();
-            if (oneTime)
+            if (euler)
             {
-                position1 = transform.position;
-                transform.position = new Vector3(0, position1.y, position1.z);
-                transform.rotation = Quaternion.Euler(0, 0, 0);
-                oneTime = false;
+                moveDirection = controls.Player.OnMove2d.ReadValue<Vector2>();
+                transform.eulerAngles = new Vector3(0, 0, 0);
+                if (oneTime)
+                {
+                    position1 = transform.position;
+                    transform.position = new Vector3(0, position1.y, position1.z);
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                    oneTime = false;
+                }
+                transform.position = new Vector3(0, transform.position.y, transform.position.z);
             }
-            transform.position = new Vector3(0, transform.position.y, transform.position.z);
+            if (!euler)
+            {
+                moveDirection = controls.Player.OnMove2d1.ReadValue<Vector2>();
+                transform.eulerAngles = new Vector3(0, 180, 0);
+                if (oneTime)
+                {
+                    position1 = transform.position;
+                    transform.position = new Vector3(0, position1.y, position1.z);
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                    oneTime = false;
+                }
+                transform.position = new Vector3(0, transform.position.y, transform.position.z);
+            }
+        }
+
+    }
+    bool euler;
+    void Euler()
+    {
+        if (Input.GetKey(KeyCode.D)){
+            euler = true;
+        }
+        else if (Input.GetKey(KeyCode.A)){
+            euler = false;
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(!threeDimensions && collision.gameObject.tag == "platform")
+        {
+            position1.x = collision.gameObject.GetComponent<moveThreeD>().position3;
+        }
+    }
 
 
     // Update is called once per frame
     void Update()
     {
+        onGround = IsGrounded();
         Tdimesions();
         Move(moveDirection);
         Jump(jumpDirection);
+        Euler();
 
-        RaycastHit hit;
-        Ray ray = new Ray(this.transform.position + Vector3.up * groundRayDist * 0.5f, -Vector3.up);
-        if (Physics.Raycast(ray, out hit, groundRayDist))
+        if (onGround)
         {
-            if (!onGround)
-            {
-                onGround = true;
-                anim.SetBool("Land", true);
-                Debug.Log("estoy en tierra");
-            }
+            anim.applyRootMotion = true;
+            anim.SetBool("Land", true);
         }
         else
         {
-            onGround = false;
+            anim.SetBool("Land", false);
             anim.applyRootMotion = false;
         }
-
-        Debug.DrawRay(this.transform.position + Vector3.up * groundRayDist * 0.5f, - Vector3.up * groundRayDist, Color.red);
     }
 }
