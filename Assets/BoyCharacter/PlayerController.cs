@@ -39,6 +39,11 @@ public class PlayerController : MonoBehaviour
 
     private Controls controls;
 
+    [SerializeField] GameObject stepRayUpper;
+    [SerializeField] GameObject stepRayLower;
+    [SerializeField] float stepHeight = 0.3f;
+    [SerializeField] float stepSmooth = 0.3f;
+
     bool IsMoveInput
     {
         get { return !Mathf.Approximately(moveDirection.sqrMagnitude, 0f); }
@@ -117,9 +122,42 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         controls = new();
-
+        //stepRayUpper.transform.position = new Vector3(stepRayUpper.transform.position.x, stepRayLower.transform.position.y + stepHeight, stepRayUpper.transform.position.z);
     }
 
+    /*void StepClimb()
+    {
+        RaycastHit hitLower;
+        if (Physics.Raycast(stepRayLower.transform.position, transform.TransformDirection(Vector3.forward), out hitLower, 0.1f))
+        {
+            RaycastHit hitUpper;
+            if(Physics.Raycast(stepRayUpper.transform.position, transform.TransformDirection(Vector3.forward), out hitUpper, 0.2f))
+            {
+                rb.position += new Vector3(0f, -stepSmooth, 0f);
+            }
+        }
+
+
+        RaycastHit hitLower45;
+        if (Physics.Raycast(stepRayLower.transform.position, transform.TransformDirection(1.5f,0,1), out hitLower45, 0.1f))
+        {
+            RaycastHit hitUpper45;
+            if (Physics.Raycast(stepRayUpper.transform.position, transform.TransformDirection(1.5f,0,1), out hitUpper45, 0.2f))
+            {
+                rb.position += new Vector3(0f, -stepSmooth, 0f);
+            }
+        }
+
+        RaycastHit hitLowerMinus45;
+        if (Physics.Raycast(stepRayLower.transform.position, transform.TransformDirection(-1.5f, 0, 1), out hitLowerMinus45, 0.1f))
+        {
+            RaycastHit hitUpperMinus45;
+            if (Physics.Raycast(stepRayUpper.transform.position, transform.TransformDirection(-1.5f, 0, 1), out hitUpperMinus45, 0.2f))
+            {
+                rb.position += new Vector3(0f, -stepSmooth, 0f);
+            }
+        }
+    }*/
 
     private void OnEnable()
     {
@@ -141,9 +179,9 @@ public class PlayerController : MonoBehaviour
             {
                 position2 = transform.position;
                 transform.position = new Vector3(position1.x, position2.y, position2.z);
-                position3.x = position1.x;
                 oneTime = true;
             }
+            position3.x = 0;
         }
         else
         {
@@ -199,6 +237,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void FixedUpdate()
+    {
+        //StepClimb();
+    }
 
     // Update is called once per frame
     void Update()
