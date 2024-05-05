@@ -31,12 +31,12 @@ public class PlayerController : MonoBehaviour
 
     const float groundAccel = 5;
     const float groundDecel = 25f;
+    public float jumpForw;
 
     public static bool threeDimensions = true;
 
     Animator anim;
     Rigidbody rb;
-    CharacterController characterController;
 
     private Controls controls;
 
@@ -66,8 +66,12 @@ public class PlayerController : MonoBehaviour
         float fDirection = direction.y;
         if (direction.sqrMagnitude > 1f)
             direction.Normalize();
-        Vector3 direction2 = (direction.y * transform.forward) + (direction.x * transform.right);
-        characterController.Move(direction2 * moveSpeed * Time.deltaTime);
+
+        desiredSpeed = direction.magnitude * maxForwardSpeed * Mathf.Sign(fDirection);
+        float acceleration = IsMoveInput ? groundAccel : groundDecel;
+
+        forwardSpeed = Mathf.MoveTowards(forwardSpeed, desiredSpeed, acceleration * Time.deltaTime);
+        anim.SetFloat("ForwardSpeed", forwardSpeed);
 
         transform.Rotate(0, turnAmount * turnSpeed * Time.deltaTime, 0);
     }
@@ -106,7 +110,7 @@ public class PlayerController : MonoBehaviour
         float a = transform.forward.z *2;
         rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
         //rb.AddForce(0, jumpSpeed, 0);
-        rb.AddForce(this.transform.forward * 100 * 10);
+        rb.AddForce(this.transform.forward * jumpForw * 10);
         //rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
         anim.SetBool("Launch", false);
         onGround= false;
