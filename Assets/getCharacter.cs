@@ -14,7 +14,7 @@ public class getCharacter : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            other.transform.parent = transform;
+            other.transform.SetParent(transform);
             Debug.Log("Player attached to cube");
         }
     }

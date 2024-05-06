@@ -101,9 +101,9 @@ public class PlayerController : MonoBehaviour
     {
 
         //rb.AddForce(new Vector3(0, 6, 0), ForceMode.Impulse);
-        anim.applyRootMotion = false;
+        //anim.applyRootMotion = false;
         //float a = transform.forward.z *2;
-        rb.AddForce(Vector3.up * jumpSpeed * Time.deltaTime, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * jumpSpeed, ForceMode.VelocityChange);
         //rb.AddForce(0, jumpSpeed, 0);
         //rb.AddForce(this.transform.forward * 100 * 10);
         //rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
