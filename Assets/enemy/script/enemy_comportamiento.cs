@@ -13,11 +13,13 @@ public class enemy_comportamiento : MonoBehaviour
 
     public GameObject target;
     public bool atacando;
+    public HealthManager heartSystem;
 
     // Start is called before the first frame update
     void Start()
     {
         ani = GetComponent<Animator>();
+        HealthManager heartSystem = GetComponent<HealthManager>();
     }
 
     public void comportamiento_enemigo()
@@ -81,4 +83,10 @@ public class enemy_comportamiento : MonoBehaviour
     {
         comportamiento_enemigo();
     }
+
+    public void Attack()
+    {
+        heartSystem.TakeDamage(5);
+    }
+
 }

@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public float jumpSpeed = 0.1f;
     public float groundRayDist = 1.1f;
     bool onGround;
+    [SerializeField] private HealthManager health;
 
     bool oneTime = false;
     bool readyJump = false;
@@ -241,6 +242,12 @@ public class PlayerController : MonoBehaviour
         {
             position1.x = position3.x;
         }
+
+        if (collision.gameObject.tag == "Bullet")
+        {
+            health.TakeDamage(50);
+        }
+
     }
 
     void FixedUpdate()
@@ -268,4 +275,5 @@ public class PlayerController : MonoBehaviour
             anim.applyRootMotion = false;
         }
     }
+
 }
