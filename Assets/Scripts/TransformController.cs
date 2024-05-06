@@ -15,7 +15,7 @@ public class Transformcontroller : MonoBehaviour
     public bool moveToTheNext = true;
     public float waitTime;
 
-    void Update()
+    void FixedUpdate()
     {
         MovePlatform();
     }
