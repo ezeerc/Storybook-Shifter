@@ -8,7 +8,7 @@ public class OneWayBoxCollider : MonoBehaviour
 {
     [SerializeField] private Vector3 entryDirection= Vector3.up;
     [SerializeField] private bool localDirection = false;
-    [SerializeField, Range(1.0f, 2.0f)] private float triggerScale = 1.25f;
+    [SerializeField] private float triggerScale = 2f;
     private new BoxCollider collider = null;
 
     private BoxCollider collisionCheckTrigger = null;

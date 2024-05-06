@@ -55,7 +55,6 @@ public class MovingPlatform : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             other.transform.SetParent(transform);
-            Debug.Log("Player attached to cube");
         }
     }
 
@@ -63,8 +62,7 @@ public class MovingPlatform : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            other.transform.parent = null; // Remove the parent-child relationship
-            Debug.Log("Player detached from cube");
+            other.transform.parent = null;
         }
     }
 }

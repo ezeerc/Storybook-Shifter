@@ -109,7 +109,13 @@ public class PlayerController : MonoBehaviour
         //rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
         anim.SetBool("Launch", false);
         onGround= false;
+        this.GetComponent<Collider>().enabled = false;
 
+    }
+
+    public void Falling()
+    {
+        this.GetComponent<Collider>().enabled = true;
     }
 
     public void Land()
