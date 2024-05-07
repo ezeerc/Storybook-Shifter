@@ -11,28 +11,35 @@ public class BulletFireGun : MonoBehaviour
     {
         if (healthManager == null) ;
         rb = GetComponent<Rigidbody>();
-        //healthManager = GetComponent<HealthManager>();
+        healthManager = FindObjectOfType<HealthManager>();
         rb.AddForce(transform.forward * 2000);
     }
 
     private void OnCollisionEnter(Collision col)
     {
-        Debug.Log("choqué con el pj");
-        /*if(col.gameObject.tag == "Player")
+
+
+        if(col.gameObject.tag == "Player")
         {
             Attack();
-        }*/
+        }
 
     }
-    /*public void Attack()
+    public void Attack()
     {
-
-        healthManager = GetComponentInParent<HealthManager>;
-    }*/
+        healthManager.TakeDamage(20);
+        Destroyer(3);
+    }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    private IEnumerator Destroyer(int sec)
+    {
+        yield return new WaitForSeconds(sec);
+        Destroy(this.gameObject);
     }
 }
